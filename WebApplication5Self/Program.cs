@@ -6,6 +6,8 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi;
 using WebApplication5Self.Data;
 using WebApplication5Self.Repository;
+using WebApplication5Self.Services;
+using WebApplication5Self.Services.GenerateOTP;
 using WebApplication5Self.Services.GenerateToken;
 using WebApplication5Self.Services.MailServices;
 
@@ -33,6 +35,8 @@ builder.Services.AddScoped<IStudentRepository, StudentRepository>();
 builder.Services.AddScoped<ISubjectRepository, SubjectRepository>();
 builder.Services.AddScoped<ITokenService,TokenService>();
 builder.Services.AddScoped<IMailServicees, MailServicees>();
+builder.Services.AddScoped<IOtpService, OtpService>();
+builder.Services.AddScoped<IAuthService,AuthService>();
 
 var connectionString = builder.Configuration.GetConnectionString("Default");
 builder.Services.AddDbContext<DataContext>(options =>options.UseNpgsql(connectionString));

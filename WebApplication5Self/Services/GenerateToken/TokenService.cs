@@ -16,20 +16,16 @@ public class TokenService:ITokenService
 {
     
     private readonly IConfiguration _configuration;
-    private readonly DataContext _dbcontext;
-    private readonly IHttpContextAccessor _httpContextAccessor;
     
     public TokenService(IConfiguration configuration,DataContext dataContext,IHttpContextAccessor httpContextAccessor)
     {
         _configuration = configuration;
-        _dbcontext = dataContext;
-        _httpContextAccessor = httpContextAccessor;
     }
     
 
    
 
-    public string GenerateToken(int userId,string role)
+    public string  GenerateToken(int userId,string role)
     {
         
         
@@ -55,85 +51,10 @@ public class TokenService:ITokenService
 
     }
 
-    public async Task<string> Login(string name, string password)
-    {
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Username == name && x.Password == password);
-        if (user == null)
-        {
-            return "No data Found";
-
-        }
-
-        var token = GenerateToken(user.Id,"User");
-        return token;
-    }
-
-    [Authorize]
-    [HttpPost("change-password")]
-    public async Task<string> ChangePassword(string oldPassword, string newPassword)
-    {
-        var claimUserId = _httpContextAccessor.HttpContext.User.FindFirst("UserId");
-        var userid = Convert.ToInt32(claimUserId.Value);
-        
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(x=>x.Id == userid&&x.Password == oldPassword);
-        if (user == null)
-        {
-            return "User not found";
-        }
-        
-        user.Password = newPassword;
-        await _dbcontext.SaveChangesAsync();
-        return "Success";
-        
-    }
-
-    [Authorize]
-    [HttpPost("reset password")]
-    public async Task<string> ResetPassword(string newPassword)
-    {
-        var claimuserid = _httpContextAccessor.HttpContext.User.FindFirst("UserId");
-        var userid = Convert.ToInt32(claimuserid.Value);
-        
-        var user = await _dbcontext.Users.FirstOrDefaultAsync(x => x.Id == userid);
-        if (user == null)
-        {
-            return "User not found";
-        }
-        user.Password = newPassword;
-        _dbcontext.Users.Update(user);
-        await _dbcontext.SaveChangesAsync();
-        return "Success";
-        
-    }
+   
 
 
-    [HttpPost("forgot")]
-    public async Task<string> ForgotPassword(string userName)
-    {
-        var user=await _dbcontext.Users.FirstOrDefaultAsync(x=>x.Username==userName);
-
-        if (user == null)
-        {
-            return "User not found";
-        }
-
-        var code = new Random().Next(1000, 9999);
-        var otp = new OTP()
-        {
-            OtpCode = code,
-            UserId = user.Id
-        };
-        await _dbcontext.OTPs.AddAsync(otp);
-        await _dbcontext.SaveChangesAsync();
-        
-        return code.ToString();
-
-
-
-
-
-
-    }
+   
     
     
 

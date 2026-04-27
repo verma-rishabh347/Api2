@@ -9,8 +9,14 @@ public class OTP
         [Key]
         public int Id { get; set; }
         public int OtpCode { get; set; }
+        
+        public DateTime Time { get; set; }
+        
+        
+        
+        public bool IsUsed { get; set; }
     
-        [ForeignKey("User")]
+        [ForeignKey("user")]
         public int UserId { get; set; }
         public Users user { get; set; }
     
